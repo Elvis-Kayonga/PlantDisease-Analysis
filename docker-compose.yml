@@ -1,0 +1,60 @@
+version: '3.8'
+
+services:
+  # FastAPI Backend
+  api:
+    build: .
+    container_name: plant-disease-api
+    ports:
+      - "8000:8000"
+    environment:
+      - TF_CPP_MIN_LOG_LEVEL=2
+      - CUDA_VISIBLE_DEVICES=0
+    volumes:
+      - ./models:/app/models
+      - ./uploaded_data:/app/uploaded_data
+      - ./data:/app/data
+      - ./logs:/app/logs
+    networks:
+      - plant-disease-network
+    command: python main.py
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+
+  # Optional: Load testing service
+  load-tester:
+    build: .
+    container_name: plant-disease-load-test
+    ports:
+      - "8089:8089"
+    depends_on:
+      - api
+    environment:
+      - LOCUST_API_URL=http://api:8000
+    volumes:
+      - ./logs:/app/logs
+    networks:
+      - plant-disease-network
+    command: locust -f locustfile.py --host=http://api:8000 --web --port=8089
+    profiles:
+      - load-test
+
+networks:
+  plant-disease-network:
+    driver: bridge
+
+volumes:
+  models:
+  uploaded_data:
+  logs:

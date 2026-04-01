@@ -1,0 +1,390 @@
+Machine  Learning  Cycle  
+Objective:  
+You  will  demonstrate  the  end-to-end  Machine  Learning  process.  
+Overview  
+As  a  Machine  Learning  engineer,  you  have  been  tasked  with  creating  an  ML  Pipeline  
+and
+ 
+scaling
+ 
+and
+ 
+monitoring
+ 
+it
+ 
+on
+ 
+a
+ 
+cloud
+ 
+platform
+ 
+of
+ 
+your
+ 
+choice.
+ 
+For
+ 
+this
+ 
+assignment,
+ 
+build
+ 
+on
+ 
+the
+ 
+use
+ 
+case
+ 
+for
+ 
+the
+ 
+introduction
+ 
+to
+ 
+Machine
+ 
+Learning
+ 
+Module
+ 
+Summative.
+ 
+The
+ 
+extension
+ 
+on
+ 
+this
+ 
+particular
+ 
+assignment
+ 
+is
+ 
+to
+ 
+ensure
+ 
+you
+ 
+use
+ 
+data
+ 
+that
+ 
+is
+ 
+not
+ 
+tabular,
+ 
+preferably
+ 
+image
+ 
+or
+ 
+sound.
+ 
+Tasks  
+Creating  a  Machine  Learning  Classiﬁcation  model  ofﬂine  and  deploying  it.  
+Evaluate  the  model(s)  using  all  the  metrics  required  on  a  Jupyter  Notebook  and  
+demonstrate
+ 
+how
+ 
+good
+ 
+the
+ 
+model(s)
+ 
+are.
+ 
+The  Breakdown:  
+  Create  the  following  processes:    Data  acquisition     Data  processing     Model  Creation     Model  testing  
+  Model  Retraining  -  in  such  a  way  that  the  model  can  be  retrained  
+again,
+ 
+and
+ 
+create
+ 
+a
+ 
+trigger
+ 
+for
+ 
+retraining
+ 
+the
+ 
+model
+ 
+when
+ 
+the
+ 
+need
+ 
+arises.
+    API  creation  with  Python.    Create  a  UI  to  cover  the  following    Model  up-time    Data  Visualizations    Access  to  train  and  retrain  functionalities    Deploy  the  processes  in  task  1   on  a  cloud  platform.  Demonstrate  the  
+evaluation
+ 
+process
+ 
+of
+ 
+the
+ 
+model
+ 
+in
+ 
+production.
+   Simulate  a  ﬂood  of  requests  (using  software  https://locust.io/)  send  them  to  the  model,  and  show  how  the  model  responds  to  these  
+requests.
+ 
+Record
+ 
+and
+ 
+show
+ 
+the
+ 
+latency
+ 
+and
+ 
+response
+ 
+time
+ 
+of
+ 
+the
+ 
+requests
+ 
+with
+ 
+different
+ 
+numbers
+ 
+of
+ 
+Docker
+ 
+containers.
+   Demonstrate  how  a  user  uploads  values/features  and  the  model  
+predicts
+     A  User  should  be  able  to  upload  new  data  and  trigger  retraining.  
+The  ﬁnal  solution  MUST  have  the  following  functionalities:  
+  Model  prediction  -  Allow  a  user  to  predict  one  datapoint  from  an  image  
+or
+ 
+sound
+   Visualizations  -  Create  visualizations  that  make  sense  of  different  
+features
+ 
+in
+ 
+your
+ 
+dataset.
+ 
+Create
+ 
+interpretations
+ 
+of
+ 
+at
+ 
+least
+ 
+3
+ 
+features
+ 
+in
+ 
+your
+ 
+dataset.
+ 
+What
+ 
+story
+ 
+does
+ 
+it
+ 
+tell?
+   Upload  Data  -  Bulk  data  that  will  be  used  to  retrain  (multiple  images,  
+multiple
+ 
+.wav
+ 
+ﬁles
+ 
+for
+ 
+sound)
+   Trigger  retraining  based  on  the  uploaded  data  -  Have  a  feature  where  
+one
+ 
+can
+ 
+press
+ 
+a
+ 
+button
+ 
+that
+ 
+can
+ 
+trigger
+ 
+a
+ 
+retraining
+ 
+process
+ 
+Github  Repo  Directory  Structure  
+Project_name/  
+│
+ 
+├──
+ 
+README.md
+ 
+│
+ 
+├──
+ 
+notebook/
+ 
+│    ├── project_name.ipynb  
+│
+ 
+├──
+ 
+src/
+ 
+│
+   
+├──
+ 
+preprocessing.py
+ 
+│
+   
+├──
+ 
+model.py
+ 
+│
+   
+└──
+ 
+prediction.py
+ 
+│
+ 
+├──
+ 
+data/
+ 
+│
+   
+├──
+train/
+ 
+│
+   
+└──
+ 
+test/
+ 
+└──
+ 
+models/
+ 
+   
+├──
+ 
+_model_name.pkl
+ 
+or
+ 
+_model_name.tf
+ 
+Requirements  
+  A  link  to  the  GitHub  repo.    The  README.md  should  have  clear  instructions  on:  
+  A  video  Demo  -  YouTube  Link  
+  URL  where  applicable    The  project  description    And  clear  steps  on  how  to  set  it  up    Results  from  Flood  Request  Simulation    Notebook    Should  contain  detailed  preprocessing  steps    Model  Training    Model  Test  /  Prediction  Functions    The  model  ﬁle    Pickle  (.pkl),  tensorﬂow  (.tf)  or  .h5  ﬁle  
+Submission  Instructions  
+You  will  have  two  attempts  during  submission  Make  sure  to  submit  the  following  in  
+each
+ 
+attempt
+ 
+respectively
+   The  ﬁrst  attempt  will  be  a  Zip  File  of  the  GitHub  Code  Repository    The  second  attempt  will  be  a  GitHub  Repository   URL  
+
+ 
+ 
+ 
+Rubric:
+ 
+ 
+ MLOPs  
+Criteria  How  to  P  
+Video  demo  
+5  to  >3.0  ptsExcellent Clear  and  user-friendly  demonstration  of:  The  prediction  and  retraining  process  in  a  video  with  Camera  on  
+ 
+5  pts  
+ 
+Retraining  Process  
+The  script  +  Model  file  for  retraining  MUST  be  present  to  evaluate  this  criteria  
+10  to  >7.5  ptsExcellent Clear  Demonstration  of  the  following  triggers  1.  Data  file  Uploading  +  Saving  to  Database  (for  purposes  of  retraining)  2.  Data  Preprocessing  of  the  uploaded  data  3.  Retraining  -  The  student  uses  a  custom  model  created  as  a  pre-trained  model  
+ 
+10  pts  
+Prediction  Process  
+The  script  +  model  file  for  prediction  MUST  be  present  to  evaluate  this  criterion  
+10  to  >7.5  ptsExcellent Clear  Demonstration  of  the  following:  1.  Inserting  a  data  point  for  prediction  (Could  be  an  image  or  inputs  of  a  CSV  row,  or  an  audio  file)  2.  Displays  the  CORRECT  prediction  based  on  the  label/class  of  the  data  point  
+ 
+10  pts  
+Evaluation  of  Models  
+The  notebook  used  to  create  the  model  MUST  be  present  to  evaluate  this  criteria  
+10  to  >7.5  ptsExcellent Clear  Preprocessing  steps  are  present  with  clear  use  of  optimization  techniques  (Regularization,  Optimizers,  early  stopping,use  of  a  pretrained  model  or  hyper  parameter  tuning)  and  Uses  At  least  4  Evaluation  metrics  used  (Accuracy,  loss,  F1  score,  Precision,  Recall  e.t.c)  
+ 
+10  pts  
+ 
+Deployment  Package  
+10  to  >7.0  ptsExcellent Showcases  a  UI  using  mobile  app  or  Web  app  (Dockerized  or  public  URL  )  Contains  some  data  insights  based  on  the  dataset  
+ 
+10  pts  
+ 
+ 

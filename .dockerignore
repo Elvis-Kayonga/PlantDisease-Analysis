@@ -1,0 +1,57 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+*.egg-info/
+dist/
+build/
+
+# Jupyter
+.ipynb_checkpoints/
+*.ipynb_checkpoints
+
+# Models and data
+*.h5
+*.pkl
+*.pickle
+data/
+uploaded_data/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+.gitignore
+.git/
+
+# Logs
+logs/
+*.log
+
+# Test results
+.pytest_cache/
+htmlcov/
+
+# Temporary
+temp_*
+*_temp
+.env
+.env.local
+
+# Documentation
+*.md
+docs/
+
+# Node (if using frontend build tools)
+node_modules/
+package-lock.json
