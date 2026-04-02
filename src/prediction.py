@@ -32,9 +32,7 @@ class PlantDiseasePredictor:
         self.model_kind = None
         self.model_path = Path(model_path)
         self.class_names = class_names
-        self.num_classes = len(class_names)
-        self._load_model_artifact()
-        logger.info(f"Predictor initialized with model from {model_path}")
+        self.num_classes = len(class_names) if class_names else 0
         logger.info(f"Classes: {self.class_names}")
 
     def _candidate_model_paths(self):
@@ -73,6 +71,21 @@ class PlantDiseasePredictor:
         self.model = tf.keras.models.load_model(str(model_file), compile=False)
         self.model_kind = "keras"
 
+    def _try_override_classes(self, candidate_path):
+        """If returning a fallback model, prefer the 'class_names.pkl' located beside it."""
+        class_pkl = candidate_path.parent / "class_names.pkl"
+        if class_pkl.exists():
+            import pickle
+            try:
+                with open(class_pkl, 'rb') as f:
+                    new_classes = pickle.load(f)
+                if new_classes and len(new_classes) != self.num_classes:
+                    logger.info(f"Overriding class_names from {class_pkl} (found {len(new_classes)} classes, previous was {self.num_classes})")
+                    self.class_names = new_classes
+                    self.num_classes = len(new_classes)
+            except Exception as e:
+                logger.warning(f"Failed to load class overlay from {class_pkl}: {e}")
+
     def _load_model_artifact(self):
         """Load the first compatible model artifact we can find."""
         load_errors = []
@@ -82,11 +95,13 @@ class PlantDiseasePredictor:
                 if candidate.exists() and candidate.is_dir():
                     self._load_saved_model(candidate)
                     logger.info(f"Loaded SavedModel from {candidate}")
+                    self._try_override_classes(candidate)
                     return
 
                 if candidate.exists() and candidate.is_file():
                     self._load_keras_model(candidate)
                     logger.info(f"Loaded Keras model from {candidate}")
+                    self._try_override_classes(candidate)
                     return
             except Exception as exc:
                 load_errors.append(f"{candidate}: {exc}")
