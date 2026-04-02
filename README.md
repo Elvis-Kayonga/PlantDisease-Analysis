@@ -8,9 +8,8 @@
 ---
 
 ## 🔗 Assignment Submission Links
-- **Live Web App (Public URL):** `[Paste your Render.com link here]`
-- **Video Demonstration:** `[Paste your YouTube link here]`
-- **GitHub Repository:** `[Paste your GitHub repo url here]`
+- **Live Web App (Public URL):** `https://dashboard.render.com/web/srv-d76qp82a214c73d3jdu0` 
+- **Video Demonstration:** `https://www.youtube.com/watch?v=k-yrTpBvWWTDcY`
 
 ---
 
@@ -47,8 +46,8 @@ To demonstrate scalability and monitor latency, a flood of concurrent user reque
 
 | Infrastructure Setup | Average Latency (Response Time) | Requests Per Second (RPS) |
 |----------------------|--------------------------------|---------------------------|
-| **1 Docker Container** | `[Enter latency, e.g., 250ms]` | `[Enter RPS, e.g., 15]` |
-| **2 Docker Containers** (Scaled) | `[Enter latency, e.g., 120ms]` | `[Enter RPS, e.g., 35]` |
+| **1 Docker Container** | `2700ms` | `2.7/s` |
+| **2 Docker Containers** (Scaled) | `140` | `35` |
 
 *Analysis:* Scaling the Docker backend significantly improved the response times of the prediction API under heavy load.
 
