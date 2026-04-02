@@ -196,8 +196,8 @@ export default function App() {
   return (
     <div className="page-shell">
       <aside className="sidebar">
-        <h1>LeafScope</h1>
-        <p>Plant disease diagnostics and retraining workflow</p>
+        <h1>_LEAF.OS // CYBERNETIC</h1>
+        <p>TERMINAL: ML_PLANT_DIAGNOSTICS & RETRAINING MODULE</p>
 
         <button className="btn btn-muted" onClick={loadCore}>Refresh Model State</button>
 
@@ -229,12 +229,12 @@ export default function App() {
 
       <main className="main">
         <section className="hero">
-          <h2>LeafScope Platform</h2>
+          <h2>NEURAL DASHBOARD // V1.0</h2>
           <p>
-            Real-time inference with FastAPI + TensorFlow. API: {API_BASE_URL}
+            Real-time inference with FastAPI + TensorFlow. CONNECTION: SECURE | SERVER: DEPLOYED
           </p>
           <span className={`pill ${apiHealthy ? "ok" : "bad"}`}>
-            API {apiHealthy ? "Healthy" : "Unavailable"}
+            SYSTEM {apiHealthy ? "ONLINE" : "OFFLINE"}
           </span>
         </section>
 
