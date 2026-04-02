@@ -64,12 +64,13 @@ app.add_middleware(
 IMG_HEIGHT = 224
 IMG_WIDTH = 224
 BATCH_SIZE = 32
-MODEL_PATH = "models/plant_disease_model.h5"
-METADATA_PATH = "models/metadata.json"
-CLASS_NAMES_PATH = "models/class_names.pkl"
-UPLOADED_DATA_DIR = "uploaded_data"
-MODELS_DIR = "models"
-DB_PATH = "data/plant_disease.db"
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+MODEL_PATH = os.path.join(BASE_DIR, "models", "plant_disease_model.h5")
+METADATA_PATH = os.path.join(BASE_DIR, "models", "metadata.json")
+CLASS_NAMES_PATH = os.path.join(BASE_DIR, "models", "class_names.pkl")
+UPLOADED_DATA_DIR = os.path.join(BASE_DIR, "uploaded_data")
+MODELS_DIR = os.path.join(BASE_DIR, "models")
+DB_PATH = os.path.join(BASE_DIR, "data", "plant_disease.db")
 
 # Global variables for model and metadata
 predictor = None
