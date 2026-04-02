@@ -217,7 +217,7 @@ def load_model(model_path):
     Returns:
         loaded keras model
     """
-    model = tf.keras.models.load_model(model_path)
+    model = tf.keras.models.load_model(model_path, compile=False)
     logger.info(f"Model loaded from {model_path}")
     return model
 

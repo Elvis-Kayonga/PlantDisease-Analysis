@@ -26,11 +26,105 @@ class PlantDiseasePredictor:
             model_path: path to saved model
             class_names: list of class names in order
         """
-        self.model = tf.keras.models.load_model(model_path)
+        self.model = None
+        self.saved_model = None
+        self.saved_model_signature = None
+        self.model_kind = None
+        self.model_path = Path(model_path)
         self.class_names = class_names
         self.num_classes = len(class_names)
+        self._load_model_artifact()
         logger.info(f"Predictor initialized with model from {model_path}")
         logger.info(f"Classes: {self.class_names}")
+
+    def _candidate_model_paths(self):
+        """Return model paths to try in order of preference."""
+        repo_root = Path(__file__).resolve().parents[1]
+        candidates = [
+            self.model_path,
+            self.model_path.with_suffix(".keras"),
+            self.model_path.with_name(self.model_path.stem),
+            repo_root / "notebook" / "models" / "plant_disease_model",
+            repo_root / "notebook" / "models" / "plant_disease_model.keras",
+            repo_root / "notebook" / "models" / "plant_disease_model.h5",
+        ]
+
+        seen = set()
+        ordered_candidates = []
+        for candidate in candidates:
+            candidate_str = str(candidate)
+            if candidate_str not in seen:
+                seen.add(candidate_str)
+                ordered_candidates.append(candidate)
+
+        return ordered_candidates
+
+    def _load_saved_model(self, model_dir):
+        """Load a TensorFlow SavedModel directory for inference."""
+        self.saved_model = tf.saved_model.load(str(model_dir))
+        signatures = getattr(self.saved_model, "signatures", {}) or {}
+        self.saved_model_signature = signatures.get("serving_default")
+        if self.saved_model_signature is None and signatures:
+            self.saved_model_signature = next(iter(signatures.values()))
+        self.model_kind = "saved_model"
+
+    def _load_keras_model(self, model_file):
+        """Load a Keras model file without compiling it."""
+        self.model = tf.keras.models.load_model(str(model_file), compile=False)
+        self.model_kind = "keras"
+
+    def _load_model_artifact(self):
+        """Load the first compatible model artifact we can find."""
+        load_errors = []
+
+        for candidate in self._candidate_model_paths():
+            try:
+                if candidate.exists() and candidate.is_dir():
+                    self._load_saved_model(candidate)
+                    logger.info(f"Loaded SavedModel from {candidate}")
+                    return
+
+                if candidate.exists() and candidate.is_file():
+                    self._load_keras_model(candidate)
+                    logger.info(f"Loaded Keras model from {candidate}")
+                    return
+            except Exception as exc:
+                load_errors.append(f"{candidate}: {exc}")
+
+        raise RuntimeError(
+            "Unable to load any model artifact. Tried: " + " | ".join(load_errors)
+        )
+
+    def _predict_with_saved_model(self, img_batch):
+        """Run inference through a SavedModel signature."""
+        if self.saved_model_signature is None:
+            raise RuntimeError("SavedModel signature is not available")
+
+        input_signature = self.saved_model_signature.structured_input_signature[1]
+        tensor_input = tf.convert_to_tensor(img_batch)
+
+        if input_signature:
+            input_name = next(iter(input_signature.keys()))
+            outputs = self.saved_model_signature(**{input_name: tensor_input})
+        else:
+            outputs = self.saved_model_signature(tensor_input)
+
+        if isinstance(outputs, dict):
+            outputs = next(iter(outputs.values()))
+        elif isinstance(outputs, (list, tuple)):
+            outputs = outputs[0]
+
+        return outputs.numpy()
+
+    def _predict_batch(self, img_batch):
+        """Predict probabilities from whichever model backend was loaded."""
+        if self.model_kind == "saved_model":
+            return self._predict_with_saved_model(img_batch)
+
+        if self.model is None:
+            raise RuntimeError("Model backend is not available")
+
+        return self.model.predict(img_batch, verbose=0)
     
     def predict_image(self, image_path, return_all_probs=False):
         """
@@ -54,7 +148,7 @@ class PlantDiseasePredictor:
             img_array = np.expand_dims(img_array, axis=0)
             
             # Make prediction
-            predictions = self.model.predict(img_array, verbose=0)
+            predictions = self._predict_batch(img_array)
             predicted_idx = np.argmax(predictions[0])
             confidence = float(predictions[0][predicted_idx])
             
@@ -124,7 +218,7 @@ class PlantDiseasePredictor:
             img_batch = np.expand_dims(img_resized, axis=0)
             
             # Predict
-            predictions = self.model.predict(img_batch, verbose=0)
+            predictions = self._predict_batch(img_batch)
             predicted_idx = np.argmax(predictions[0])
             confidence = float(predictions[0][predicted_idx])
             
@@ -155,6 +249,9 @@ class PlantDiseasePredictor:
         Returns:
             dict with evaluation metrics
         """
+        if self.model is None:
+            raise RuntimeError("Evaluation requires a compiled Keras model file")
+
         results = self.model.evaluate(X_test, y_test, verbose=0)
         
         evaluation = {
