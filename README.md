@@ -8,8 +8,8 @@
 ---
 
 ## 🔗 Assignment Submission Links
-- **Live Web App (Public URL):** `https://dashboard.render.com/web/srv-d76qp82a214c73d3jdu0` 
-- **Video Demonstration:** `https://www.youtube.com/watch?v=k-yrTpBvWWTDcY`
+- **Live Web App (Public URL):** [Web app](https://dashboard.render.com/web/srv-d76qp82a214c73d3jdu0) 
+- **Video Demonstration:** [ Youtube Link ](https://www.youtube.com/watch?v=k-yrTpBvWWTDcY)
 
 ---
 
