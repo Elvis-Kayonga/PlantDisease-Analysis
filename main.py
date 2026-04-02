@@ -115,7 +115,9 @@ def load_model_resources():
             logger.warning(f"Model not found at {MODEL_PATH}")
             
     except Exception as e:
+        import traceback
         logger.error(f"Error loading model resources: {e}")
+        logger.error(traceback.format_exc())
 
 
 def _safe_filename(file_name: str) -> str:
