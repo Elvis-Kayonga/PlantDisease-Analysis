@@ -453,6 +453,12 @@ def render_data_page() -> None:
         if result and result.get("success"):
             st.success("Retraining completed.")
             st.json(result)
+        else:
+            if result is None:
+                st.error("Retraining failed. Check the error message above or ensure the API is running.")
+            else:
+                st.error(f"Retraining failed: {result.get('detail', 'Unknown error')}")
+                st.json(result)
 
 
 def render_ops_page() -> None:
