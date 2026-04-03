@@ -39,7 +39,8 @@ The UI includes dynamic interpretations of the dataset:
 
 ---
 
-## 📊 Locust Load Testing (Flood Request Simulation)
+## ![Locust Load Testing](https://locust.io/assets/img/logo.png)
+ Locust Load Testing (Flood Request Simulation)
 To demonstrate scalability and monitor latency, a flood of concurrent user requests was simulated using Locust. 
 
 **Simulated Load Setup:** 100 Concurrent Users, 10 Spawn Rate.
