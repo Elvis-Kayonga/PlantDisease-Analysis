@@ -8,8 +8,9 @@
 ---
 
 ## 🔗 Assignment Submission Links
-- **Live Web App (Public URL):** [Web app](https://plant-disease-api-5fzb.onrender.com) 
-- **Video Demonstration:** [ Youtube Link ](https://www.youtube.com/watch?v=k-yrTpBvWWTDcY)
+- **Live Frontend (Vercel):** Deploy to Vercel using instructions in [DEPLOYMENT.md](./DEPLOYMENT.md)
+- **Live Backend API (Render):** [API](https://plant-disease-api-5fzb.onrender.com)
+- **Video Demonstration:** [Youtube Link](https://www.youtube.com/watch?v=k-yrTpBvWWTDcY)
 
 ---
 
@@ -56,7 +57,20 @@ To demonstrate scalability and monitor latency, a flood of concurrent user reque
 
 ## 🚀 Setup & Execution Instructions
 
-### Running Locally via Docker (Recommended)
+### 🌐 Production Deployment (Recommended)
+**Separate deployments for optimal resource usage:**
+- **Frontend → Vercel** (Static hosting with CDN)
+- **Backend → Render** (ML model + API)
+
+📖 **See [DEPLOYMENT.md](./DEPLOYMENT.md) for complete deployment guide**
+
+This approach:
+- ✅ Avoids Render free tier size limits (512MB)
+- ✅ Leverages Vercel's optimized static hosting
+- ✅ Enables independent frontend/backend updates
+- ✅ Better performance with global CDN
+
+### 💻 Running Locally via Docker
 The entire application (FastAPI + React) is bundled into a unified Docker container.
 ```bash
 # 1. Build the Docker image
@@ -66,6 +80,19 @@ docker-compose build
 docker-compose up
 ```
 Access the Web UI at: `http://localhost:8000`
+
+### 🔧 Running Locally for Development
+```bash
+# Terminal 1: Backend API
+python main.py
+# Runs on http://localhost:8000
+
+# Terminal 2: Frontend Dev Server
+cd frontend
+npm install
+npm run dev
+# Runs on http://localhost:5173
+```
 
 ### Running Load Tests
 With the Docker container fully running, open a new terminal:
