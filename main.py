@@ -18,6 +18,8 @@ from typing import Dict, List, Optional, Tuple
 import pickle
 import re
 import io
+import gc
+from threading import Lock
 
 from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score
 from PIL import Image, UnidentifiedImageError
@@ -58,9 +60,11 @@ app.add_middleware(
 )
 
 # Configuration
-IMG_HEIGHT = 224
+IMG_HEIGHT = 224  # MobileNetV2 expects 224x224
 IMG_WIDTH = 224
 BATCH_SIZE = 32
+MAX_FILE_SIZE_MB = 10  # Maximum upload file size in MB
+MAX_FILE_SIZE_BYTES = MAX_FILE_SIZE_MB * 1024 * 1024
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 MODEL_PATH = os.path.join(BASE_DIR, "models", "plant_disease_model.h5")
 METADATA_PATH = os.path.join(BASE_DIR, "models", "metadata.json")
@@ -74,6 +78,9 @@ TRAIN_DATA_DIR = os.path.join(BASE_DIR, "data", "train")
 predictor = None
 class_names = None
 metadata = None
+
+# Thread lock for retraining to prevent race conditions
+training_lock = Lock()
 
 # Model state
 model_status = {
@@ -255,10 +262,19 @@ def _combine_datasets(image_arrays: List[np.ndarray], label_arrays: List[np.ndar
 
 @app.on_event("startup")
 async def startup_event():
-    """Load model on startup."""
+    """Load model on startup and verify it loaded correctly."""
     logger.info("Starting up Plant Disease Detection API")
     safe_call(init_db, DB_PATH)
     load_model_resources()
+
+    # Health check: Ensure model loaded successfully
+    if not model_status["loaded"]:
+        logger.error("CRITICAL: Model failed to load during startup!")
+        logger.error("API will start but predictions will fail. Check MODEL_PATH and model files.")
+        # Note: We don't exit here to allow the API to start for debugging
+    else:
+        logger.info(f"Model loaded successfully with {len(class_names or [])} classes")
+
     logger.info("API startup completed")
 
 
@@ -290,19 +306,27 @@ async def get_model_status():
 async def predict(file: UploadFile = File(...)):
     """
     Predict plant disease from uploaded image.
-    
+
     Args:
         file: Image file (JPG, PNG)
-    
+
     Returns:
         Prediction result with class label and confidence
     """
     if not model_status["loaded"]:
         raise HTTPException(status_code=503, detail="Model not loaded")
-    
+
     try:
         started = perf_counter()
         content = await file.read()
+
+        # Validate file size
+        if len(content) > MAX_FILE_SIZE_BYTES:
+            raise HTTPException(
+                status_code=413,
+                detail=f"File too large. Maximum size is {MAX_FILE_SIZE_MB}MB"
+            )
+
         if not content:
             raise HTTPException(status_code=400, detail="Uploaded file is empty")
 
@@ -373,6 +397,16 @@ async def upload_data(
         normalized_class_name = _canonicalize_class_name(class_name) if class_name else None
         
         for file in files:
+            # Validate file size
+            content = await file.read()
+            if len(content) > MAX_FILE_SIZE_BYTES:
+                skipped_files.append(f"{file.filename} (too large)")
+                logger.warning(f"Skipping file {file.filename}: exceeds {MAX_FILE_SIZE_MB}MB limit")
+                continue
+
+            # Reset file pointer after size check
+            await file.seek(0)
+
             # Validate file type
             if not file.filename.lower().endswith(('.jpg', '.jpeg', '.png')):
                 logger.warning(f"Skipping non-image file: {file.filename}")
@@ -438,13 +472,14 @@ async def upload_data(
 async def retrain_model():
     """
     Trigger model retraining with accumulated data.
-    
+
     Returns:
         Retraining status
     """
-    if model_status["training_in_progress"]:
+    # Use lock to prevent race condition with concurrent requests
+    if not training_lock.acquire(blocking=False):
         raise HTTPException(status_code=409, detail="Training already in progress")
-    
+
     try:
         model_status["training_in_progress"] = True
         logger.info("Starting model retraining...")
@@ -611,6 +646,13 @@ async def retrain_model():
             details={"uploaded_classes": uploaded_class_dirs},
             db_path=DB_PATH,
         )
+
+        # Explicit memory cleanup
+        del model, base_model, X_train, X_val, X_test, y_train, y_val, y_test
+        del X_all, y_all, X_base, y_base, X_uploaded, y_uploaded
+        del y_train_encoded, y_val_encoded, y_pred_prob, y_pred
+        gc.collect()
+
         model_status["training_in_progress"] = False
 
         return {
@@ -619,9 +661,9 @@ async def retrain_model():
             "last_trained": new_metadata["last_trained"],
             "metrics": metrics,
             "num_classes": num_classes,
-            "total_samples": len(X_all)
+            "total_samples": len(new_metadata["classes"])  # Use metadata since arrays deleted
         }
-        
+
     except Exception as e:
         model_status["training_in_progress"] = False
         logger.error(f"Retraining error: {e}")
@@ -634,6 +676,9 @@ async def retrain_model():
         if isinstance(e, HTTPException):
             raise e
         raise HTTPException(status_code=500, detail=f"Retraining failed: {str(e)}")
+    finally:
+        # Always release the lock, even if an exception occurred
+        training_lock.release()
 
 
 @app.get("/metrics")
