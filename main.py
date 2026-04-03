@@ -3,9 +3,6 @@ FastAPI backend for plant disease detection model.
 Provides endpoints for prediction, data upload, and retraining.
 """
 
-import sys
-sys.path.insert(0, r"C:\tfpkg")
-
 from fastapi import FastAPI, File, UploadFile, HTTPException, Form
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles

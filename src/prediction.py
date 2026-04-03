@@ -21,7 +21,7 @@ class PlantDiseasePredictor:
     def __init__(self, model_path, class_names):
         """
         Initialize predictor with trained model and class names.
-        
+
         Args:
             model_path: path to saved model
             class_names: list of class names in order
@@ -34,6 +34,9 @@ class PlantDiseasePredictor:
         self.class_names = class_names
         self.num_classes = len(class_names) if class_names else 0
         logger.info(f"Classes: {self.class_names}")
+
+        # Load the model artifact
+        self._load_model_artifact()
 
     def _candidate_model_paths(self):
         """Return model paths to try in order of preference."""
