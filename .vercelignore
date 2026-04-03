@@ -1,0 +1,32 @@
+# Backend files - not needed for Vercel (frontend-only)
+main.py
+src/
+data/
+models/
+uploaded_data/
+notebook/
+locustfile.py
+requirements.txt
+Dockerfile
+docker-compose.yml
+*.db
+*.h5
+*.pkl
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+env/
+ENV/
+
+# Logs and temp files
+logs/
+*.log
+.DS_Store
+
+# Keep only frontend
+!frontend/
