@@ -68,6 +68,7 @@ CLASS_NAMES_PATH = os.path.join(BASE_DIR, "models", "class_names.pkl")
 UPLOADED_DATA_DIR = os.path.join(BASE_DIR, "uploaded_data")
 MODELS_DIR = os.path.join(BASE_DIR, "models")
 DB_PATH = os.path.join(BASE_DIR, "data", "plant_disease.db")
+TRAIN_DATA_DIR = os.path.join(BASE_DIR, "data", "train")
 
 # Global variables for model and metadata
 predictor = None
@@ -476,7 +477,7 @@ async def retrain_model():
 
         # Load baseline training data and newly uploaded data.
         X_base, y_base, class_to_idx = _load_images_with_class_map(
-            "data/train",
+            TRAIN_DATA_DIR,
             class_to_idx=class_to_idx,
             include_new_classes=False
         )
