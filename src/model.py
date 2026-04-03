@@ -11,6 +11,7 @@ import os
 
 logger = logging.getLogger(__name__)
 
+# MobileNetV2 expects 224x224 input size
 IMG_HEIGHT = 224
 IMG_WIDTH = 224
 
