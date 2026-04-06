@@ -1,0 +1,25 @@
+{
+    "classes": [
+        "Orange___Haunglongbing_(Citrus_greening)",
+        "Tomato___Tomato_Yellow_Leaf_Curl_Virus",
+        "Soybean___healthy",
+        "Peach___Bacterial_spot",
+        "Tomato___Bacterial_spot"
+    ],
+    "num_classes": 5,
+    "img_height": 128,
+    "img_width": 128,
+    "metrics": {
+        "loss": 0.9324852824211121,
+        "accuracy": 0.9493333101272583,
+        "precision": 0.9554148109437601,
+        "recall": 0.9493333333333334,
+        "f1_score": 0.949099799766851
+    },
+    "model_type": "MobileNetV2_Transfer_Learning",
+    "training_config": {
+        "batch_size": 32,
+        "epochs": 6,
+        "fine_tune_layers": 10
+    }
+}
