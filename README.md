@@ -9,7 +9,7 @@
 
 ## 🔗 Assignment Submission Links
 - **Live Frontend (Vercel):** Deploy to Vercel using instructions in [DEPLOYMENT.md](./DEPLOYMENT.md)
-- **Live Backend API (Render):** [API](https://plant-disease-api-5fzb.onrender.com)
+- **Live Backend API (Render):** [LIVE UI PLATFORM](https://plant-disease-api-5fzb.onrender.com)
 - **Video Demonstration:** [Youtube Link](https://youtu.be/eWilXnBfoQM)
 
 ---
